@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مجتمع مسار — Fame AI</title>
+    <!-- مكتبة EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { kufi: ['"Noto Kufi Arabic"', 'sans-serif'] } } }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        :root {
+            --bg: #faf9ff;
+            --card: #ffffff;
+            --border: rgba(124,58,237,.1);
+            --border-h: rgba(124,58,237,.3);
+            --shadow: 0 4px 20px rgba(124,58,237,.05);
+            --shadow-h: 0 10px 40px rgba(124,58,237,.15);
+            
+            --p1: #7c3aed; --p2: #a78bfa; --p3: #c084fc;
+            --p4: #4c1d95; --p5: #6d28d9;
+            --p-dark: #3b0764;
+            
+            --txt: #1e1b3a; --txt2: #4c4672; --muted: #8b82a8;
+            --inp-bg: #f5f3ff; --inp-b: rgba(124,58,237,.15);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Noto Kufi Arabic', sans-serif;
+            background: var(--bg); color: var(--txt);
+            min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* === خلفية متحركة (بنفسجية فقط) === */
+        .bg-scene { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+        .blob {
+            position:absolute; border-radius:50%;
+            filter:blur(100px); opacity:.08;
+        }
+        .b1 { width:500px; height:500px; background:var(--p2); top:-10%; right:-10%; animation:bm1 25s ease-in-out infinite; }
+        .b2 { width:400px; height:400px; background:var(--p1); top:40%; left:10%; animation:bm2 30s ease-in-out infinite; }
+        .b3 { width:450px; height:450px; background:var(--p4); bottom:-10%; left:-10%; animation:bm3 22s ease-in-out infinite; }
+        
+        @keyframes bm1 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-40px,40px) scale(1.1)} 66%{transform:translate(30px,-20px) scale(.95)} }
+        @keyframes bm2 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(40px,-40px) scale(1.05)} 66%{transform:translate(-40px,40px) scale(.9)} }
+        @keyframes bm3 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,30px) scale(1.08)} 66%{transform:translate(-30px,-20px) scale(.92)} }
+
+        .dot-grid {
+            position:absolute; inset:0;
+            background-image: radial-gradient(circle, rgba(124,58,237,.04) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* أشكال هندسية عائمة */
+        .shape {
+            position:absolute;
+            border: 1.5px solid rgba(124,58,237,.15);
+            animation: shapeUp linear infinite;
+        }
+        .sh-circle { border-radius:50%; background: rgba(124,58,237,.03); }
+        .sh-hex { clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%); background:rgba(124,58,237,.05); border:none; }
+        .sh-diamond { transform:rotate(45deg); border-radius:4px; background:rgba(167,139,250,.05); }
+        .sh-ring { border-radius:50%; border-width:2px; background:transparent; }
+        @keyframes shapeUp {
+            0%{transform:translateY(0) rotate(0deg); opacity:0}
+            10%{opacity:1} 90%{opacity:1}
+            100%{transform:translateY(-110vh) rotate(360deg); opacity:0}
+        }
+
+        /* === المحتوى === */
+        .page { position:relative; z-index:1; max-width:560px; margin:0 auto; padding:0 18px; }
+
+        /* === معالجة الشعارات === */
+        .logo-blended {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            mix-blend-mode: multiply; 
+        }
+        
+        /* === الهيرو === */
+        .hero { text-align:center; padding:40px 0 30px; position:relative; }
+        
+        .logo-wrap {
+            width:160px; height:160px; margin:0 auto 24px;
+            background:linear-gradient(135deg, var(--p4), var(--p1), var(--p3));
+            border-radius:40% 60% 70% 30% / 40% 50% 60% 50%;
+            display:flex; align-items:center; justify-content:center;
+            padding:15px; 
+            box-shadow:0 12px 40px rgba(124,58,237,.25);
+            animation: logoBreath 4s ease-in-out infinite;
+            position:relative;
+        }
+        .logo-wrap::after {
+            content:''; position:absolute; inset:-6px;
+            border-radius:40% 60% 70% 30% / 40% 50% 60% 50%;
+            background:linear-gradient(135deg, var(--p3), var(--p1));
+            z-index:-1; opacity:.3; filter:blur(10px);
+            animation: logoBreath 4s ease-in-out infinite reverse;
+        }
+        @keyframes logoBreath { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
+        
+        .hero-brand { 
+            font-size:34px; font-weight:900; 
+            color:var(--txt); margin-bottom:4px; 
+            letter-spacing: -0.5px;
+        }
+
+        .hero-tag { font-size:15px; font-weight:400; color:var(--muted); margin-bottom:30px; }
+
+        /* أزرار الهيرو */
+        .hero-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+        .h-btn {
+            padding:12px 24px; border-radius:16px; border:none;
+            font-family:'Noto Kufi Arabic',sans-serif;
+            font-size:14px; font-weight:600; cursor:pointer;
+            transition:all .3s; text-decoration:none;
+            display:flex; align-items:center; gap:8px;
+        }
+        .h-btn-primary {
+            background:linear-gradient(135deg, var(--p4), var(--p1));
+            color:#fff; box-shadow:0 6px 20px rgba(124,58,237,.3);
+        }
+        .h-btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(124,58,237,.4); }
+        .h-btn-outline {
+            background:var(--card); color:var(--p1);
+            border:1.5px solid var(--border);
+            box-shadow:var(--shadow);
+        }
+        .h-btn-outline:hover { border-color:var(--p2); transform:translateY(-2px); background:#fff; box-shadow:var(--shadow-h); }
+
+        /* === البطاقات === */
+        .g-card {
+            background:var(--card); border:1px solid var(--border);
+            border-radius:24px; padding:28px 24px;
+            box-shadow:var(--shadow);
+            margin-bottom:20px;
+            transition:all .4s cubic-bezier(.4,0,.2,1);
+            opacity:0; transform:translateY(20px);
+            animation:fadeUp .6s ease-out forwards;
+        }
+        .g-card:hover { border-color:var(--border-h); box-shadow:var(--shadow-h); }
+        @keyframes fadeUp { to{opacity:1;transform:translateY(0)} }
+
+        .c-title {
+            font-size:18px; font-weight:700; margin-bottom:24px;
+            display:flex; align-items:center; justify-content:center; gap:10px; color:var(--txt);
+            width:100%;
+            flex-wrap: wrap;
+        }
+        .c-title i {
+            font-size:15px; color:var(--p1);
+            width:36px; height:36px; display:flex; align-items:center; justify-content:center;
+            border-radius:12px; background:rgba(124,58,237,.08);
+        }
+        .c-title img {
+            height: 36px; width: auto;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+        }
+
+        .card-logo-container {
+            display:flex; justify-content:center; margin-bottom:15px;
+            background: transparent;
+            border-radius: 12px;
+            padding: 5px;
+        }
+
+        /* === خيارات المرحلة === */
+        .lvl-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:24px; }
+        .lvl {
+            position:relative; padding:18px 10px; border-radius:16px;
+            border:1.5px solid var(--border); background:var(--bg);
+            text-align:center; cursor:pointer; transition:all .3s;
+            user-select:none;
+        }
+        .lvl:hover { border-color:var(--p2); background:#fff; }
+        .lvl.on { border-color:var(--p1); background:rgba(124,58,237,.08); box-shadow:0 0 0 2px rgba(124,58,237,.1); }
+        .lvl.on .lvl-chk { opacity:1; transform:scale(1); }
+        .lvl.on .lvl-lbl { color:var(--p1); font-weight:700; }
+        .lvl-chk {
+            position:absolute; top:6px; left:6px; width:18px; height:18px;
+            border-radius:50%; background:var(--p1);
+            display:flex; align-items:center; justify-content:center;
+            font-size:8px; color:#fff; opacity:0; transform:scale(.4);
+            transition:all .25s;
+        }
+        .lbl-ico { font-size:24px; display:block; margin-bottom:8px; color:var(--p2); }
+        .lvl-lbl { font-size:13px; font-weight:600; color:var(--txt2); transition:all .3s; }
+
+        /* === الحقول === */
+        .fld { margin-bottom:16px; }
+        .fld-lbl { display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+        .fld-inp {
+            width:100%; padding:14px 18px; border-radius:14px;
+            border:1.5px solid var(--inp-b); background:var(--inp-bg);
+            color:var(--txt); font-family:'Noto Kufi Arabic',sans-serif;
+            font-size:14px; outline:none; transition:all .3s;
+        }
+        .fld-inp::placeholder { color:var(--muted); opacity:.5; }
+        .fld-inp:focus { border-color:var(--p1); box-shadow:0 0 0 4px rgba(124,58,237,.1); background:#fff; }
+        textarea.fld-inp { resize:vertical; min-height:80px; }
+
+        /* === الأزرار === */
+        .btn {
+            width:100%; padding:14px; border-radius:16px; border:none;
+            font-family:'Noto Kufi Arabic',sans-serif;
+            font-size:15px; font-weight:700; cursor:pointer;
+            transition:all .3s;
+            display:flex; align-items:center; justify-content:center; gap:10px;
+        }
+        .btn-p {
+            background:linear-gradient(135deg, var(--p4), var(--p1));
+            color:#fff; box-shadow:0 6px 24px rgba(124,58,237,.3);
+        }
+        .btn-p:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(124,58,237,.4); }
+        .btn-p:active { transform:translateY(0); }
+
+        .btn-disc {
+            background:linear-gradient(135deg, var(--p5), var(--p4));
+            color:#fff; border:none;
+        }
+        .btn-disc:hover { background:linear-gradient(135deg, var(--p4), var(--p-dark)); transform:translateY(-2px); }
+
+        .divider { display:flex; align-items:center; gap:12px; margin:20px 0; color:var(--muted); font-size:12px; }
+        .divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
+        /* === قسم المؤسس والشركة === */
+        .founder-card, .company-card { text-align:center; }
+        
+        .founder-photo-wrap, .company-photo-wrap {
+            width: 240px; 
+            height: 300px; 
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, var(--p4), var(--p1)); 
+            border-radius: 40px; 
+            padding: 20px; 
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(124,58,237, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* تنسيق خاص لصورة المؤسس */
+        .founder-photo-wrap img {
+            width: 100%; 
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            border-radius: 25px; 
+            mix-blend-mode: normal;
+        }
+
+        /* تنسيق خاص لشعار الشركة */
+        .company-photo-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            mix-blend-mode: normal;
+        }
+        
+        .founder-name, .company-name { font-size:22px; font-weight:800; margin-bottom:4px; color:var(--txt); }
+        .founder-role, .company-role { font-size:14px; color:var(--muted); margin-bottom:10px; }
+        
+        .fame-link {
+            display:inline-flex; align-items:center; gap:8px;
+            padding:8px 20px; border-radius:100px;
+            background:linear-gradient(135deg, var(--p4), var(--p1));
+            color:#fff; font-size:13px; font-weight:700;
+            text-decoration:none; transition:all .3s;
+            box-shadow:0 4px 16px rgba(124,58,237,.25);
+            margin-bottom:24px;
+        }
+        .fame-link:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(124,58,237,.35); }
+
+        /* شبكات التواصل */
+        .socials { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+        .soc {
+            width:48px; height:48px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:18px; color:#fff;
+            transition:all .3s; cursor:pointer;
+            text-decoration:none;
+            position:relative; overflow:hidden;
+        }
+        .soc::before {
+            content:''; position:absolute; inset:0;
+            opacity:0; transition:opacity .3s;
+            background:rgba(255,255,255,.2);
+        }
+        .soc:hover { transform:translateY(-3px) scale(1.05); }
+        .soc:hover::before { opacity:1; }
+
+        .soc-circle { border-radius:50%; }
+        .soc-hex { clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%); }
+        .soc-blob1 { border-radius:30% 70% 70% 30% / 30% 30% 70% 70%; }
+        .soc-blob2 { border-radius:60% 40% 30% 70% / 60% 30% 70% 40%; }
+        .soc-diamond { border-radius:8px; transform:rotate(45deg); }
+        .soc-diamond i { transform:rotate(-45deg); }
+        .soc-pill { border-radius:100px; width:auto; padding:0 20px; gap:8px; }
+        .soc-rounded { border-radius:14px; }
+
+        /* تذييل */
+        .foot { text-align:center; padding:30px 0 50px; }
+        .foot-logo-wrap {
+            width: auto; 
+            height: auto; 
+            margin: 0 auto 16px;
+            background: none;
+            clip-path: none;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        .foot-name { font-size:15px; font-weight:800; color:var(--txt); margin-bottom:16px; letter-spacing:0.5px; }
+        .foot-copy { font-size:12px; color:var(--muted); margin-top:20px; }
+
+        /* === التوست === */
+        .toast {
+            position:fixed; bottom:30px; left:50%;
+            transform:translateX(-50%) translateY(80px);
+            background:linear-gradient(135deg, var(--p-dark), var(--p4));
+            color:#fff; padding:14px 28px; border-radius:16px;
+            font-size:14px; font-weight:600;
+            box-shadow:0 10px 30px rgba(76,29,149,.3);
+            z-index:999; opacity:0; transition:all .4s cubic-bezier(.4,0,.2,1);
+            pointer-events:none; white-space:nowrap;
+            border:1px solid rgba(255,255,255,.1);
+        }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+        /* === الخطأ === */
+        .fld-err { border-color:#ef4444!important; box-shadow:0 0 0 4px rgba(239,68,68,.08)!important; }
+
+        /* === التجاوب === */
+        @media (max-width:400px) {
+            .lvl-grid { gap:8px; }
+            .lvl { padding:14px 6px; }
+            .lbl-ico { font-size:20px; }
+            .g-card { padding:24px 16px; }
+            .hero-btns { flex-direction:column; align-items:stretch; }
+            .h-btn { justify-content:center; }
+            .founder-photo-wrap, .company-photo-wrap { width: 200px; height: 260px; }
+        }
+        @media (min-width:768px) {
+            .page { max-width:520px; }
+            .hero { padding:80px 0 50px; }
+            .hero-brand { font-size:42px; }
+        }
+        @media (prefers-reduced-motion:reduce) {
+            .blob,.shape,.logo-wrap,.logo-wrap::after { animation:none!important; }
+            .g-card { animation:none; opacity:1; transform:none; }
+        }
+    </style>
+</head>
+<body class="font-kufi">
+
+    <!-- الخلفية -->
+    <div class="bg-scene" aria-hidden="true">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+        <div class="blob b3"></div>
+        <div class="dot-grid"></div>
+        <div id="shapesBox"></div>
+    </div>
+
+    <div class="page">
+
+        <!-- === الهيرو === -->
+        <header class="hero" id="hero">
+            <div class="logo-wrap">
+                <!-- تمت إزالة الشعار -->
+            </div>
+            
+            <h1 class="hero-brand">
+                مجتمع مسار
+            </h1>
+            
+            <p class="hero-tag">لا نحلم فقط بل نحلم وننفذ</p>
+            <div class="hero-btns">
+                <a href="#join" class="h-btn h-btn-primary"><i class="fa-solid fa-user-plus"></i> انضم للمجتمع</a>
+                <a href="#service" class="h-btn h-btn-outline"><i class="fa-solid fa-briefcase"></i> طلب خدمة</a>
+                <a href="#founder" class="h-btn h-btn-outline"><i class="fa-solid fa-crown"></i> المؤسس</a>
+            </div>
+        </header>
+
+        <!-- === انضم للمجتمع (شعار جولو الكبير) === -->
+        <section class="g-card" style="animation-delay:.06s" id="join" aria-label="انضم للمجتمع">
+            <div class="card-logo-container">
+                <!-- الشعار الكبير -->
+                <img src="https://z-cdn-media.chatglm.cn/files/4795feae-509e-45ef-abcf-993c3b2b3069.png?auth_key=1876348714-6be9572314e44d9e98b768ec508840cc-0-70abf1741cff532fa5ca7da44819515d" style="height: 130px; mix-blend-mode: multiply; object-fit: contain;" alt="شعار جولو كبير">
+            </div>
+            
+            <div class="c-title"><i class="fa-solid fa-rocket"></i><span>انضم لمجتمع مسار</span></div>
+
+            <div class="lvl-grid" role="radiogroup" aria-label="المرحلة الدراسية">
+                <div class="lvl" role="radio" aria-checked="false" tabindex="0" data-level="ابتدائي">
+                    <span class="lvl-chk"><i class="fa-solid fa-check"></i></span>
+                    <span class="lbl-ico"><i class="fa-solid fa-seedling"></i></span>
+                    <span class="lvl-lbl">ابتدائي</span>
+                </div>
+                <div class="lvl" role="radio" aria-checked="false" tabindex="0" data-level="متوسط">
+                    <span class="lvl-chk"><i class="fa-solid fa-check"></i></span>
+                    <span class="lbl-ico"><i class="fa-solid fa-book-open"></i></span>
+                    <span class="lvl-lbl">متوسط</span>
+                </div>
+                <div class="lvl" role="radio" aria-checked="false" tabindex="0" data-level="ثانوي">
+                    <span class="lvl-chk"><i class="fa-solid fa-check"></i></span>
+                    <span class="lbl-ico"><i class="fa-solid fa-graduation-cap"></i></span>
+                    <span class="lvl-lbl">ثانوي</span>
+                </div>
+            </div>
+
+            <form id="joinForm" autocomplete="off" novalidate>
+                <div class="fld">
+                    <label class="fld-lbl" for="jName"><i class="fa-solid fa-user" style="margin-left:4px;font-size:10px"></i> الاسم</label>
+                    <input class="fld-inp" type="text" id="jName" placeholder="اكتب اسمك هنا">
+                </div>
+                <div class="fld">
+                    <label class="fld-lbl" for="jEmail"><i class="fa-solid fa-envelope" style="margin-left:4px;font-size:10px"></i> البريد الالكتروني</label>
+                    <input class="fld-inp" type="email" id="jEmail" placeholder="example@mail.com" dir="ltr" style="text-align:right">
+                </div>
+                <div class="fld">
+                    <label class="fld-lbl" for="jPhone"><i class="fa-solid fa-phone" style="margin-left:4px;font-size:10px"></i> رقم الهاتف</label>
+                    <input class="fld-inp" type="tel" id="jPhone" placeholder="05xxxxxxxx" dir="ltr" style="text-align:right">
+                </div>
+                <div class="fld">
+                    <label class="fld-lbl" for="jAge"><i class="fa-solid fa-hourglass-half" style="margin-left:4px;font-size:10px"></i> العمر</label>
+                    <input class="fld-inp" type="number" id="jAge" placeholder="مثال: 18">
+                </div>
+                <div class="fld">
+                    <label class="fld-lbl" for="jSpec"><i class="fa-solid fa-lightbulb" style="margin-left:4px;font-size:10px"></i> ما هو تخصصك؟</label>
+                    <input class="fld-inp" type="text" id="jSpec" placeholder="مثال: تصميم، برمجة...">
+                </div>
+                <div class="fld">
+                    <label class="fld-lbl" for="jMsg"><i class="fa-solid fa-comment" style="margin-left:4px;font-size:10px"></i> رسالة</label>
+                    <textarea class="fld-inp" id="jMsg" placeholder="اختياري — اكتب رسالتك"></textarea>
+                </div>
+                <button type="submit" class="btn btn-p"><i class="fa-solid fa-paper-plane"></i> ارسال</button>
+            </form>
+
+            <div class="divider">او</div>
+            <a href="https://discord.gg/YSVeyqVgc" target="_blank" class="btn btn-disc" id="discordBtn"><i class="fa-brands fa-discord"></i> المجتمع على ديسكورد</a>
+        </section>
+
+        <!-- === طلب خدمة (تم تغيير الشعار فوق النص) === -->
+        <section class="g-card" style="animation-delay:.16s" id="service" aria-label="طلب خدمة">
+            <div class="c-title" style="flex-direction: column; gap: 10px;">
+                <!-- الشعار الجديد ضخم وفوق النص -->
+                <img src="https://z-cdn-media.chatglm.cn/files/ab61e07b-076c-4b86-9860-26e4ef310e1a.png?auth_key=1876356694-099afc0b16ca4a68a096e824ae856aca-0-dff07c379d71496fec1e14e8fec9e7ad" alt="F Logo New" style="height: 150px; mix-blend-mode: multiply; width: auto;">
+                <span>طلب خدمة</span>
+            </div>
+            <form id="svcForm" autocomplete="off" novalidate>
+                <div class="fld">
+                    <label class="fld-lbl" for="sName"><i class="fa-solid fa-user" style="margin-left:4px;font-size:10px"></i> الاسم</label>
+                    <input class="fld-inp" type="text" id="sName" placeholder="اكتب اسمك">
+                </div>
+                <div class="fld">
+                    <label class="fld-lbl" for="sEmail"><i class="fa-solid fa-envelope" style="margin-left:4px;font-size:10px"></i> البريد الالكتروني</label>
+                    <input class="fld-inp" type="email" id="sEmail" placeholder="example@mail.com" dir="ltr" style="text-align:right">
+                </div>
+                <div class="fld">
+                    <label class="fld-lbl" for="sPhone"><i class="fa-solid fa-phone" style="margin-left:4px;font-size:10px"></i> رقم الهاتف</label>
+                    <input class="fld-inp" type="tel" id="sPhone" placeholder="05xxxxxxxx" dir="ltr" style="text-align:right">
+                </div>
+                <div class="fld">
+                    <label class="fld-lbl" for="sAge"><i class="fa-solid fa-hourglass-half" style="margin-left:4px;font-size:10px"></i> العمر</label>
+                    <input class="fld-inp" type="number" id="sAge" placeholder="مثال: 18">
+                </div>
+                <div class="fld">
+                    <label class="fld-lbl" for="sSpec"><i class="fa-solid fa-lightbulb" style="margin-left:4px;font-size:10px"></i> ما هو تخصصك؟</label>
+                    <input class="fld-inp" type="text" id="sSpec" placeholder="مثال: تصميم، برمجة...">
+                </div>
+                <div class="fld">
+                    <label class="fld-lbl" for="sEntity"><i class="fa-solid fa-building" style="margin-left:4px;font-size:10px"></i> اسم الجهة / الفرد</label>
+                    <input class="fld-inp" type="text" id="sEntity" placeholder="مثال: شركة XX او اسمك الشخصي">
+                </div>
+                <div class="fld">
+                    <label class="fld-lbl" for="sMsg"><i class="fa-solid fa-comment-dots" style="margin-left:4px;font-size:10px"></i> الرسالة</label>
+                    <textarea class="fld-inp" id="sMsg" placeholder="اكتب تفاصيل الخدمة المطلوبة"></textarea>
+                </div>
+                <button type="submit" class="btn btn-p"><i class="fa-solid fa-paper-plane"></i> ارسال الطلب</button>
+            </form>
+        </section>
+
+        <!-- === المؤسس === -->
+        <section class="g-card founder-card" style="animation-delay:.26s" id="founder" aria-label="المؤسس">
+            <div class="c-title" style="justify-content:center"><i class="fa-solid fa-crown"></i><span>المؤسس</span></div>
+            
+            <div class="founder-photo-wrap">
+                <img src="https://z-cdn-media.chatglm.cn/files/562f26a8-7970-4dfa-912e-5d7d6cb01087.jpeg?auth_key=1876343469-40873c8872d04b24847fd7f81ce6223b-0-ac268f5242f66802bbb25bb09e1097b2" alt="تميم الحارثي">
+            </div>
+            
+            <div class="founder-name">تميم الحارثي</div>
+            <div class="founder-role">مؤسس مجتمع مسار</div>
+            
+            <a href="#" class="fame-link" id="fameLinkBtn" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px"></i> Fame AI Platform</a>
+
+            <div style="font-size:11px;color:var(--muted);margin-bottom:16px">تواصل مع تميم</div>
+            <div class="socials">
+                <a href="https://x.com/tamimimpact?s=21" target="_blank" rel="noopener" class="soc soc-circle" style="background:linear-gradient(135deg, var(--p-dark), var(--p4))" title="X / تويتر">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+                <a href="https://www.tiktok.com/@tamimimpact?_r=1&_t=ZS-95Rrd2rY9qP" target="_blank" rel="noopener" class="soc soc-hex" style="background:linear-gradient(135deg, var(--p4), var(--p1))" title="تيك توك">
+                    <i class="fa-brands fa-tiktok"></i>
+                </a>
+                <a href="https://www.instagram.com/tamimimpact?igsh=anVtM2Z5NHVxb3ds&utm_source=qr" target="_blank" rel="noopener" class="soc soc-blob1" style="background:linear-gradient(135deg, var(--p2), var(--p1))" title="انستقرام">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="mailto:tamimimpact@gmail.com" class="soc soc-blob2" style="background:linear-gradient(135deg,var(--p5),var(--p1))" title="البريد الالكتروني">
+                    <i class="fa-solid fa-envelope"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- === الشركة (Fame AI) === -->
+        <section class="g-card company-card" style="animation-delay:.36s" id="company" aria-label="الشركة">
+            <div class="c-title" style="justify-content:center"><i class="fa-solid fa-building"></i><span>Fame AI</span></div>
+            
+            <div class="company-photo-wrap">
+                <!-- الشعار الجديد في مربع بزوايا ناعمة -->
+                <img src="https://z-cdn-media.chatglm.cn/files/ab61e07b-076c-4b86-9860-26e4ef310e1a.png?auth_key=1876356694-099afc0b16ca4a68a096e824ae856aca-0-dff07c379d71496fec1e14e8fec9e7ad" alt="Fame AI Logo New">
+            </div>
+            
+            <div class="company-name">Fame AI Platform</div>
+            <div class="company-role">منصة إبداعية تعتمد على الذكاء الاصطناعي</div>
+
+            <a href="https://fameai.media" class="fame-link" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px"></i> الموقع الرسمي</a>
+
+            <div style="font-size:11px;color:var(--muted);margin-bottom:16px">تواصل مع Fame AI</div>
+            <!-- تم حذف الصورة وإضافة الأزرار الفردية -->
+            <div class="socials">
+                <a href="https://x.com/fameaimedia?s=21" target="_blank" rel="noopener" class="soc soc-circle" style="background:linear-gradient(135deg, var(--p-dark), var(--p4))" title="X / تويتر">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+                <a href="https://www.tiktok.com/@fameai.media" target="_blank" rel="noopener" class="soc soc-hex" style="background:linear-gradient(135deg, var(--p4), var(--p1))" title="تيك توك">
+                    <i class="fa-brands fa-tiktok"></i>
+                </a>
+                <a href="https://www.instagram.com/fameai.media" target="_blank" rel="noopener" class="soc soc-rounded" style="background:linear-gradient(135deg, var(--p2), var(--p1))" title="انستقرام">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="mailto:contact@fameai.media" class="soc soc-pill" style="background:linear-gradient(135deg,var(--p5),var(--p1))" title="البريد الالكتروني">
+                    <i class="fa-solid fa-envelope"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- === التذييل (تم حذف روابط التواصل) === -->
+        <footer class="foot">
+            <div class="foot-logo-wrap">
+                <!-- الشعار محذوف -->
+            </div>
+            <div class="foot-name">FAME AI</div>
+            <!-- تم حذف الايميل والانستقرام وتي كتوك وتويتر -->
+            <p class="foot-copy">&copy; FAMEAI 2026. الحقوق محفوظة</p>
+        </footer>
+    </div>
+
+    <!-- التوست -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ==========================================
+        // === إعدادات EmailJS (استبدل البيانات هنا) ===
+        // ==========================================
+        
+        // استبدل "YOUR_PUBLIC_KEY" بالمفتاح العام الخاص بحسابك
+        const PUBLIC_KEY = "64t3FuSJPHyGBTbGJ";
+        
+        // استبدل "YOUR_SERVICE_ID" بمعرف الخدمة
+        const SERVICE_ID = "service_fmctg4t";
+        
+        // استبدل "YOUR_TEMPLATE_ID" بمعرف القالب
+        const TEMPLATE_ID = "template_gah294s";
+
+        // تهيئة EmailJS
+        (function(){
+            emailjs.init(PUBLIC_KEY);
+        })();
+
+        // ==========================================
+        // === منطق الموقع (Forms & Animations) ===
+        // ==========================================
+
+        /* === أشكال هندسية عائمة === */
+        (function(){
+            const box = document.getElementById('shapesBox');
+            const types = ['circle','hex','diamond','ring','circle','hex','ring'];
+            for(let i=0;i<8;i++){
+                const el = document.createElement('div');
+                el.className = 'shape sh-' + types[i % types.length];
+                const s = 15 + Math.random()*35;
+                el.style.width = s+'px';
+                el.style.height = s+'px';
+                el.style.left = Math.random()*100+'%';
+                el.style.bottom = '-60px';
+                el.style.animationDuration = (25+Math.random()*30)+'s';
+                el.style.animationDelay = (Math.random()*20)+'s';
+                box.appendChild(el);
+            }
+        })();
+
+        /* === اختيار المرحلة === */
+        let selectedLevel = null;
+        document.querySelectorAll('.lvl').forEach(opt => {
+            function pick(){
+                document.querySelectorAll('.lvl').forEach(o=>{o.classList.remove('on');o.setAttribute('aria-checked','false')});
+                opt.classList.add('on');
+                opt.setAttribute('aria-checked','true');
+                selectedLevel = opt.dataset.level;
+            }
+            opt.addEventListener('click', pick);
+            opt.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()} });
+        });
+
+        /* === مساعدة (Toast) === */
+        function toast(t){ const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3200); }
+        function markErr(inp){ inp.classList.add('fld-err'); inp.addEventListener('input',function h(){inp.classList.remove('fld-err');inp.removeEventListener('input',h)}, {once:true}); }
+
+        /* === نموذج الانضمام (Join Form) === */
+        document.getElementById('joinForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...';
+            btn.disabled = true;
+
+            const n=document.getElementById('jName'), em=document.getElementById('jEmail'), ph=document.getElementById('jPhone'), ag=document.getElementById('jAge');
+            const sp=document.getElementById('jSpec'), msg=document.getElementById('jMsg');
+            
+            // التحقق من البيانات (Validation)
+            let ok=true;
+            if(!selectedLevel){ toast('المرحلة الدراسية مطلوبة'); ok=false; }
+            if(!n.value.trim()){ markErr(n); toast('الاسم مطلوب'); ok=false; }
+            if(!em.value.trim()||!em.value.includes('@')){ markErr(em); toast('الإيميل غير صحيح'); ok=false; }
+            if(!ph.value.trim()){ markErr(ph); toast('رقم الهاتف مطلوب'); ok=false; }
+            if(!ag.value.trim()){ markErr(ag); toast('العمر مطلوب'); ok=false; }
+
+            if(!ok) {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // إعداد البيانات للإرسال
+            const templateParams = {
+                to_email: "contact@fameai.media",
+                name: n.value.trim(),
+                email: em.value.trim(),
+                phone: ph.value.trim(),
+                age: ag.value.trim(),
+                spec: sp.value.trim(),
+                level: selectedLevel,
+                message: msg.value.trim() || "لا توجد رسالة"
+            };
+
+            // إرسال البيانات عبر EmailJS
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+                .then(function() {
+                    toast('تم الإرسال بنجاح');
+                    // تفريغ الفورم
+                    document.getElementById('joinForm').reset();
+                    document.querySelectorAll('.lvl').forEach(o=>{o.classList.remove('on');o.setAttribute('aria-checked','false')});
+                    selectedLevel=null;
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    toast('فشل الإرسال');
+                })
+                .finally(function(){
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        });
+
+        /* === نموذج الخدمة (Service Form) === */
+        document.getElementById('svcForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...';
+            btn.disabled = true;
+
+            const n=document.getElementById('sName'), em=document.getElementById('sEmail');
+            const ph=document.getElementById('sPhone'), ag=document.getElementById('sAge');
+            const sp=document.getElementById('sSpec'), ent=document.getElementById('sEntity'), msg=document.getElementById('sMsg');
+            
+            // التحقق من البيانات (Validation)
+            let ok=true;
+            if(!n.value.trim()){ markErr(n); toast('الاسم مطلوب'); ok=false; }
+            if(!em.value.trim()||!em.value.includes('@')){ markErr(em); toast('الإيميل غير صحيح'); ok=false; }
+            if(!ph.value.trim()){ markErr(ph); toast('رقم الهاتف مطلوب'); ok=false; }
+            if(!ag.value.trim()){ markErr(ag); toast('العمر مطلوب'); ok=false; }
+            if(!msg.value.trim()){ markErr(msg); toast('الرسالة مطلوبة'); ok=false; }
+
+            if(!ok) {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // إعداد البيانات للإرسال
+            const templateParams = {
+                to_email: "contact@fameai.media",
+                name: n.value.trim(),
+                email: em.value.trim(),
+                phone: ph.value.trim(),
+                age: ag.value.trim(),
+                spec: sp.value.trim(),
+                level: "طلب خدمة", // Placeholder since join form is the only one with levels
+                entity: ent.value.trim(),
+                message: msg.value.trim()
+            };
+
+            // إرسال البيانات عبر EmailJS
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+                .then(function() {
+                    toast('تم الإرسال بنجاح');
+                    // تفريغ الفورم
+                    document.getElementById('svcForm').reset();
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    toast('فشل الإرسال');
+                })
+                .finally(function(){
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        });
+
+        /* === أزرار خارجية === */
+        document.getElementById('fameLinkBtn').addEventListener('click', function(e){
+            // يرجى وضع الرابط الصحيح في href
+        });
+    </script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
